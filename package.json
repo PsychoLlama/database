@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "babel-runtime": "^6.11.6",
-    "graph-crdt": "^0.1.0",
+    "graph-crdt": "^0.2.0",
     "is-promise": "^2.1.0"
   },
   "repository": {
