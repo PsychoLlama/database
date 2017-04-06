@@ -33,7 +33,7 @@
   "dependencies": {
     "babel-runtime": "^6.11.6",
     "eventemitter3": "^2.0.2",
-    "graph-crdt": "^0.4.0",
+    "graph-crdt": "^0.5.0",
     "is-promise": "^2.1.0"
   },
   "repository": {
