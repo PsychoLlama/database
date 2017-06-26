@@ -62,16 +62,11 @@ export default class SocketServer extends ConnectionGroup {
 
   /**
    * @param  {Object} config - Server options.
-   * @param  {Number} config.port - A port to listen on.
    */
   constructor (config) {
-    super();
-
     assert(config, `Expected config, got "${config}"`);
-    assert(
-      typeof config.port === 'number',
-      `Invalid config.port value "${config.port}" (expected number)`
-    );
+
+    super();
 
     const server = new Server(config);
     server.on('connection', (socket) => {

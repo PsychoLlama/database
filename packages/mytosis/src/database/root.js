@@ -14,6 +14,36 @@ const settings = Symbol('database configuration');
 const isOffline = (connection) => Boolean(connection.offline);
 
 /**
+ * Initiates a read from both storage and the network.
+ * @param  {Database} db - Database context.
+ * @param  {Object} action - Generated read action.
+ * @return {Promise<Node|null>} - An aggregate node of all responses.
+ */
+const readFromPlugins = async (db, action) => {
+  let node = null;
+
+  // Ask the storage plugins for it.
+  const reads = [...action.storage].map(store => store.read(action));
+
+  // Ask the network for it.
+  if (db.router) {
+    reads.push(db.router.pull(action));
+  }
+
+  // Merge every response into the same node.
+  for (const result of await Promise.all(reads)) {
+    const update = Node.source(result);
+
+    if (result) {
+      node = node || new Context(db, { uid: action.key });
+      node.merge(update);
+    }
+  }
+
+  return node;
+};
+
+/**
  * Plugin manager for graph-crdt.
  * @class Database
  */
@@ -71,7 +101,7 @@ class Database extends Graph {
    */
   async commit (update, options = {}) {
 
-    // Storage drivers get the full state of each node.
+    // Storage plugins get the full state of each changed node.
     const graph = new Graph();
     const contexts = this.new();
 
@@ -180,25 +210,9 @@ class Database extends Graph {
 
     // Not cached.
     if (node === null || config.force) {
+      node = await readFromPlugins(this, config);
 
-      // Ask the storage plugins for it.
-      const reads = [...config.storage].map(store => store.read(config));
-
-      // Ask the network for it.
-      if (this.router) {
-        reads.push(this.router.pull(config));
-      }
-
-      for (const result of await Promise.all(reads)) {
-        const update = Node.source(result);
-
-        if (result) {
-          node = node || new Context(this, { uid: config.key });
-          node.merge(update);
-        }
-      }
-
-      // Cache the value.
+      // If data was found, cache the response.
       if (node) {
         this.merge({ [config.key]: node });
       }
@@ -220,7 +234,6 @@ class Database extends Graph {
    * @return {undefined}
    */
   query (query, options) {
-
     const config = this[settings];
     const engines = config.engines;
     const engine = options.engine;
