@@ -42,12 +42,6 @@ describe('Mytosis websocket server', () => {
     expect(fail).toThrow(/config/);
   });
 
-  it('throws if the port is invalid', () => {
-    const fail = () => new SocketServer({ port: 'wat' });
-
-    expect(fail).toThrow(/port/);
-  });
-
   it('registers clients when they connect', () => {
     const spy = jest.fn();
     server.on('add', spy);
