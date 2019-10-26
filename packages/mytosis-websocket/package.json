@@ -37,7 +37,7 @@
     "@babel/runtime": "^7.6.3",
     "reconnecting-websocket": "^4.2.0",
     "uuid": "^3.3.3",
-    "uws": "^8.14.0"
+    "uws": "^100.0.1"
   },
   "peerDependencies": {
     "mytosis": "^1.11.0"
