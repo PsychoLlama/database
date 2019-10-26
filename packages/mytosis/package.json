@@ -21,7 +21,7 @@
   "devDependencies": {
     "@babel/cli": "*",
     "@babel/register": "^7.6.2",
-    "expect": "^1.20.2",
+    "expect": "^24.9.0",
     "mocha": "^6.2.2"
   },
   "dependencies": {
